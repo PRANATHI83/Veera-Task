@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: veera_task_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin234
+      POSTGRES_DB: hr_task_management
+    ports:
+      - "5436:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./Backend
+    container_name: veera_task_backend
+    depends_on:
+      - postgres
+    ports:
+      - "3003:3003"
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: admin234
+      DB_NAME: hr_task_management
+      DB_PORT: 5432
+
+  frontend:
+    build: ./Frontend
+    container_name: veera_task_frontend
+    ports:
+      - "8008:80"
+
+  hr:
+    build: ./HR
+    container_name: veera_task_hr
+    ports:
+      - "8009:80"
+
